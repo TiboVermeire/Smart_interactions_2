@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Face Recognition Web App</title>
+  <style>
+    #videoElement, #canvasElement {
+      display: block;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <video id="videoElement" autoplay></video>
+  <canvas id="canvasElement"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+  <script>
+    const video = document.getElementById('videoElement');
+    const canvas = document.getElementById('canvasElement');
+    const context = canvas.getContext('2d');
+
+    // Laad de face-api.js-modellen
+    Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri('models'),
+      faceapi.nets.faceRecognitionNet.loadFromUri('models')
+    ]).then(startVideo);
+
+    async function startVideo() {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+      video.srcObject = stream;
+
+      video.addEventListener('play', () => {
+        setInterval(async () => {
+          context.drawImage(video, 0, 0, 640, 480);
+          const detections = await faceapi.detectAllFaces(canvas).withFaceDescriptors();
+          drawResults(detections);
+        }, 100);
+      });
+    }
+
+    function drawResults(detections) {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      
+      detections.forEach(detection => {
+        const box = detection.detection.box;
+        context.strokeStyle = '#00FF00';
+        context.lineWidth = 2;
+        context.strokeRect(box.x, box.y, box.width, box.height);
+      });
+    }
+  </script>
+</body>
+</html>
