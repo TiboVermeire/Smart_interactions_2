@@ -1,5 +1,3 @@
-// script.js
-
 const URL = "https://teachablemachine.withgoogle.com/models/iG8PuTx-H/";
 
 let model, webcam, labelContainer, maxPredictions;
@@ -32,7 +30,7 @@ function toggleScan() {
       button.textContent = "Start scan";
       webcam.stop();
       clearResults();
-      location.reload(); // Reload the page
+      location.reload(); // Reload de pagina
   } else {
       button.textContent = "Stop scan";
       webcam.play();
@@ -65,9 +63,9 @@ async function predict() {
         labelElement.innerHTML = classPrediction + ": " + probability.toFixed(2);
 
         if (probability > 0.85) {
-            labelElement.style.color = "#00FF00"; // Fluorescent green color
+            labelElement.style.color = "#00FF00"; //geeft groen aan als het boven de 85% zeker is
         } else {
-            labelElement.style.color = "black"; // Reset to default color
+            labelElement.style.color = "black";
         }
     }
 }
